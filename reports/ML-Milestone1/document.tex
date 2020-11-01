@@ -28,7 +28,7 @@
 \affiliation{}
 \email{gokay.iseri@alu.uclm.es}
 
-\author{Basar Milli}
+\author{Başar Milli}
 \affiliation{}
 \email{basar.milli@alu.uclm.es}
 
@@ -65,7 +65,7 @@ objectives are as follows:
 
 \ccsdesc[500]{Computing methodologies~Machine learning}
 
-\keywords{machine learning, ml, unsupervised}
+\keywords{machine learning, unsupervised}
 
 \maketitle
 
@@ -74,74 +74,156 @@ objectives are as follows:
 %
 
 \section{Introduction}
-Introduce me please.
+In this project we explore Unsupervised Learning methods.
+We were working on DrivenData DengAI: Predicting Disease Spread competition dataset.
+Exactly our group was focused on finding relations among the data from San Juan between years 1992 - 1998.
+
+\subsection{Correlation factor}
+The data is not strongly correlated except the temperature fields.
+
+\begin{figure}[h]
+    \includegraphics[width=\linewidth]{correlation.png}
+    \centering
+    \caption{Unprocessed data correlation matrix}
+    %\Description{}
+\end{figure}
+
+\section{Dimensionality Reduction}
+\begin{figure}[h]
+    \includegraphics[width=\linewidth]{pca.png}
+    \centering
+    \caption{PCA: Explained variance ratio}
+    %\Description{}
+\end{figure}
+
+According to the explained variance ratio by projecting the data to 10 dimensions, we can preserve arround 96\% of information. That allows us to keep a lot of information by reducing total number of dimensions by half.
+
+\section{Outlier Identification}
+
+\begin{table}
+  \caption{DBSCAN results with specific epsilon.}
+  \label{tab:eps}
+  \begin{tabular}{rll}
+    \toprule
+    $epsilon$ & clusters & outliers \\
+    \midrule
+    1.2  & 0  & 364 \\
+    1.4  & 1  & 360 \\
+    1.6  & 4  & 346 \\
+    1.8  & 8  & 297 \\
+    2.0  & 5  & 252 \\
+    2.2  & 5  & 180 \\
+    2.4  & 3  & 134 \\
+    2.6  & 2  & 91  \\
+    2.8  & 2  & 58  \\
+    3.0  & 1  & 37  \\
+    3.2  & 1  & 29  \\
+    3.4  & 1  & 17  \\
+    3.6  & 1  & 10  \\
+    3.8  & 1  & 6   \\
+    4.0  & 1  & 5   \\
+    4.2  & 1  & 3   \\
+    4.4  & 1  & 3   \\
+    4.6  & 1  & 2   \\
+    4.8  & 1  & 2   \\
+    \bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[h]
+    \includegraphics[width=\linewidth]{outliers-mean.png}
+    \centering
+    \caption{Outliers' mean}
+    %\Description{}
+\end{figure}
+
+Features that have the biggest impact on outliers are all of the measures of precipitation(Highest purple, green and blue bars). Differences are noticeable so we decided not to take them into consideration in further analysis.
+
+\section{Clustering}
+    The number of cluster ($k$) has been chosen as 3, because higher values reduce Silhouette score significantly.
+    \begin{figure}[h]
+    \includegraphics[width=\linewidth]{kmeans.png}
+    \centering
+    \caption{K-means clusters projected into 2D}
+    %\Description{}
+\end{figure}
+\subsection{K-means}
+    \begin{figure}[h]
+        \includegraphics[width=\linewidth]{kmeans-mean.png}
+        \centering
+        \caption{K-means - mean diagram}
+        %\Description{}
+    \end{figure}
+    \begin{enumerate}
+        \item Group 0 has greater mean of precipitation while having lower temperatures. Humidity is around the average. This group could be labelled as having low temperature with big precipitations
+        \item Group 1 has an average precipitation, but it's climate is more humid and temperatures are higher than a mean of the whole data. This group could be labelled as as having high temperature with big precipitations
+        \item Group 2 has noticeable the biggest humidity from the previous groups. Both temperature and precipitation are low. Almost all features deviate from the mean significantly. This group could be labelled as having low temperature with small precipitations.
+    \end{enumerate}
+    
+\subsection{Hierarchical}
+
+    \begin{figure}[h]
+        \includegraphics[width=\linewidth]{dendogram-70.png}
+        \centering
+        \caption{Dendogram}
+        %\Description{}
+    \end{figure}
+    
+     The clusters have been created by cutting a tree at the height 70. It was a value that allowed us to make some bigger insight about the data. Different value either could group everything in gigantic groups or would be too fragmented.
+     
+    \begin{figure}[h]
+        \includegraphics[width=\linewidth]{hierarchical.png}
+        \centering
+        \caption{Hierarchical clustering PCA chart}
+        %\Description{}
+    \end{figure}
+    
+\begin{enumerate}
+        \item Group 0 is characterised by  a greater diurnal temperature range. Winds are above the average when temperatures precipitation and humidity are very low but the whole group is small, so it's mean should not be used to extract further details from it.
+        \item Groups 1 and 2 are quite similar. The biggest difference is that the 1st group has lower precipitation when the 2nd one has a precipitation around the global average. Both have low temperatures and humidity.
+        \item Group 3 - In that group all of the features are above the average. It seems that the temperature is the most significant factor. It is the only representative group (without taking into consideration the 0th group) where strong winds occurs.
+        \item Group 4 - In that group most of features are above the average, but a deviation is smaller than in the 3rd group. What characterise that group as well are winds which force is about the average
+\end{enumerate}
+
+
+\section{Feature selection}
+Basing on hierarchical clustered data we propose following features:
+\begin{itemize}
+    \item \texttt{ndvi\_ne}
+    \item \texttt{ndvi\_nw}
+    \item \texttt{ndvi\_se}
+    \item \texttt{ndvi\_sw}
+    \item \texttt{precipitation\_amt\_mm}
+    \item \texttt{reanalysis\_precip\_amt\_kg\_per\_m2}
+    \item \texttt{reanalysis\_specific\_humidity\_g\_per\_kg}
+\end{itemize}
+Mean values of these features in each cluster deviate from each other significantly.
+
+\section{Refinement}
+Columns allowing to identify the week were dropped but if they were preserved it could allow to get some conclusions manually.
+
+Variable names for storing data could be improved, because currently they can be difficult to distinguish. (e.g. \texttt{df} and \texttt{df2})
+
+Feature selection was performed manually by comparing charts of mean values between clusters, which should instead be performed using some numerical metrics. There was also no verification if the selected features are sufficient to distinguish the clusters in the same way.
+
+K-means, hierarchical clustering and DBSCAN parameters can be adjusted to create different groups.
+
+\section{Summary}
+We have explored the dataset and learned how to use the unsupervised learning tools.
+
+Scatter plots representing the clusters work the better the less clusters we create.
+The resulting groups are similar when using either method of clustering, we decided to create more clusters using hierarchical method.
 
 %
 %   -------OUR CODE
 %
-
-\section{Tables}
-
-\begin{table}
-  \caption{Frequency of Special Characters}
-  \label{tab:freq}
-  \begin{tabular}{ccl}
-    \toprule
-    Non-English or Math&Frequency&Comments\\
-    \midrule
-    \O & 1 in 1,000& For Swedish names\\
-    $\pi$ & 1 in 5& Common in math\\
-    \$ & 4 in 5 & Used in business\\
-    $\Psi^2_1$ & 1 in 40,000& Unexplained usage\\
-  \bottomrule
-\end{tabular}
-\end{table}
-
-To set a wider table, which takes up the whole width of the page's
-live area, use the environment \textbf{table*} to enclose the table's
-contents and the table caption.  As with a single-column table, this
-wide table will ``float'' to a location deemed more
-desirable. Immediately following this sentence is the point at which
-Table~\ref{tab:commands} is included in the input file; again, it is
-instructive to compare the placement of the table here with the table
-in the printed output of this document.
-
-\begin{table*}
-  \caption{Some Typical Commands}
-  \label{tab:commands}
-  \begin{tabular}{ccl}
-    \toprule
-    Command &A Number & Comments\\
-    \midrule
-    \texttt{{\char'134}author} & 100& Author \\
-    \texttt{{\char'134}table}& 300 & For tables\\
-    \texttt{{\char'134}table*}& 400& For wider tables\\
-    \bottomrule
-  \end{tabular}
-\end{table*}
-
-Always use midrule to separate table header rows from data rows, and
-use it only for this purpose. This enables assistive technologies to
-recognise table headers and support their users in navigating tables
-more easily.
-
-\section{Math Equations}
-
-\begin{figure}[h]
-    %\includegraphics[width=\textwidth]{}
-    \centering
-    \caption{1907 Franklin Model D roadster. Photograph by Harris \&
-    Ewing, Inc. [Public domain], via Wikimedia
-    Commons. (\url{https://goo.gl/VLCRBB}).}
-    \Description{A woman and a girl in white dresses sit in an open car.}
-\end{figure}
 
 %% The acknowledgments section is defined using the "acks" environment
 %% (and NOT an unnumbered section). This ensures the proper
 %% identification of the section in the article metadata, and the
 %% consistent spelling of the heading.
 \begin{acks}
-To Robert, for the bagels and explaining CMYK and color spaces.
+This work is part of UCLM project of the Machine Learning Techniques subject.
 \end{acks}
 
 %%
@@ -149,40 +231,6 @@ To Robert, for the bagels and explaining CMYK and color spaces.
 %% the bibliography file.
 %\bibliographystyle{ACM-Reference-Format}
 %\bibliography{sample-base}
-
-%%
-%% If your work has an appendix, this is the place to put it.
-\appendix
-
-\section{Research Methods}
-
-\subsection{Part One}
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi
-malesuada, quam in pulvinar varius, metus nunc fermentum urna, id
-sollicitudin purus odio sit amet enim. Aliquam ullamcorper eu ipsum
-vel mollis. Curabitur quis dictum nisl. Phasellus vel semper risus, et
-lacinia dolor. Integer ultricies commodo sem nec semper.
-
-\subsection{Part Two}
-
-Etiam commodo feugiat nisl pulvinar pellentesque. Etiam auctor sodales
-ligula, non varius nibh pulvinar semper. Suspendisse nec lectus non
-ipsum convallis congue hendrerit vitae sapien. Donec at laoreet
-eros. Vivamus non purus placerat, scelerisque diam eu, cursus
-ante. Etiam aliquam tortor auctor efficitur mattis.
-
-\section{Online Resources}
-
-Nam id fermentum dui. Suspendisse sagittis tortor a nulla mollis, in
-pulvinar ex pretium. Sed interdum orci quis metus euismod, et sagittis
-enim maximus. Vestibulum gravida massa ut felis suscipit
-congue. Quisque mattis elit a risus ultrices commodo venenatis eget
-dui. Etiam sagittis eleifend elementum.
-
-Nam interdum magna at lectus dignissim, ac dignissim lorem
-rhoncus. Maecenas eu arcu ac neque placerat aliquam. Nunc pulvinar
-massa et mattis lacinia.
 
 \end{document}
 \endinput

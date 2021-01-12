@@ -8,3 +8,7 @@ Group members:
 
 > **Dataset:** San juan 1992 - 1998
 
+## Notebooks
+Available notebooks are:
+- Milestones 1 unsupervised and 2 supervised learning
+- NLP for prerpocessing and model training

@@ -1,0 +1,9 @@
+,MAE,MAE_test,R2,MAE2
+KNeighborsRegressor(n_neighbors=62),0.8042676698030107,0.8137734245960856,-0.07015043036455593,0.6544916559475098
+DecisionTreeRegressor(max_depth=2),0.8099614744802665,0.8174222081901105,-0.04252371511115993,0.6620804970185772
+"RandomForestRegressor(criterion='mae',max_depth=2,n_estimators=5,random_state=0)",0.7852058204358043,0.8154851347144015,-7.75099608361085e-05,0.6403236742566241
+"LinearSVR(C=0.2,loss='squared_epsilon_insensitive',max_iter=10000.0,random_state=99)",0.8023601572990383,0.786189022425713,-0.06647325647216817,0.6308067477002722
+"RandomForestRegressor(bootstrap=False,max_depth=14,max_features='sqrt',min_samples_leaf=8,min_samples_split=8,n_estimators=64)",0.5446035406618293,0.7566571888171556,0.3870767976293239,0.4120781840970492
+"RandomForestRegressor(bootstrap=False,criterion='mae',max_depth=12,max_features='sqrt',min_samples_leaf=3,min_samples_split=4,n_estimators=149)",0.47545523265694223,0.8020932359645844,0.5360742068617621,0.38135942611810114
+"AdaBoostRegressor(base_estimator=DecisionTreeRegressor(max_depth=3),learning_rate=0.5,n_estimators=100)",0.7268324739997665,0.7779540822091474,0.30457395147047217,0.5654422902302924
+"GradientBoostingRegressor(n_estimators=200,random_state=0)",0.5017754944916046,0.8360943663589764,0.6972140754864096,0.41953166412142023
